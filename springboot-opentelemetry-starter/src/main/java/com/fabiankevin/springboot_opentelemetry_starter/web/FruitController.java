@@ -11,8 +11,8 @@ import java.util.List;
 public class FruitController {
 
     @GetMapping
-//    @WithSpan(value = "span name")
     public List<String> getFruits(){
         return List.of("Apple", "Grape");
     }
 }
+
