@@ -4,12 +4,13 @@ spring:
   application:
     name: springboot-opentelemetry-starter
 
-otel:
-  service:
-    name: Spring-boot-app
-  exporter:
-    otlp:
+management:
+  otlp:
+    tracing:
       endpoint: http://localhost:4318
+  tracing:
+    sampling:
+      probability: 1.0
 
 
 #management.expor
