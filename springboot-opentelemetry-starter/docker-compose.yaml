@@ -20,6 +20,8 @@ services:
     ports:
       - "4317:4317" # gRPC
       - "4318:4318" # HTTP
+      - "8889:8889" # Prometheus exporter
+      - "8888:8888" # OTLP own metrics
     depends_on:
       - tempo
 
@@ -36,6 +38,13 @@ services:
       - "--storage.trace.wal.path=/tmp/tempo/wal"
       - "--auth.enabled=false"
       - "-config.file=/etc/tempo.yml"
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
 
 networks:
   default:

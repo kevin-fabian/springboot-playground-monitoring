@@ -10,20 +10,24 @@ processors:
 
 exporters:
   debug:
-    verbosity: detailed
+    verbosity: normal
   otlp:
     endpoint: tempo:4317
     tls:
       insecure: true
+  prometheus:
+    endpoint: "0.0.0.0:8889" #This will be exposed by Opentelemetry
+
 service:
   pipelines:
     metrics:
       receivers: [otlp]
-      exporters: [debug]
+      exporters: [prometheus, debug]
     traces:
       receivers: [otlp]
       processors: [batch]
       exporters: [otlp]
     logs:
       receivers: [otlp]
+      processors: [batch]
       exporters: [debug]
