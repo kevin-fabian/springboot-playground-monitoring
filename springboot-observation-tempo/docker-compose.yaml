@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  init:
+    image: &tempoImage grafana/tempo:latest
+    user: root
+    entrypoint:
+      - "chown"
+      - "10001:10001"
+      - "/var/tempo"
+    volumes:
+      - ./tempo-data:/var/tempo
+
+  tempo:
+    image: *tempoImage
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo-config.yaml:/etc/tempo.yaml
+      - ./tempo-data:/var/tempo
+    depends_on:
+      - init
+    ports:
+      - "3200:3200"
+      - "3100:3100"
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+
+#  prometheus:
+#    image: prom/prometheus:latest
+#    command:
+#      - --config.file=/etc/prometheus.yaml
+#      - --web.enable-remote-write-receiver
+#      - --enable-feature=exemplar-storage
+#      - --enable-feature=native-histograms
+#    volumes:
+#      - ./shared/prometheus.yaml:/etc/prometheus.yaml
+#    ports:
+#      - "9090:9090"
+#
+#  grafana:
+#    image: grafana/grafana:11.0.0
+#    volumes:
+#      - ./shared/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+#    environment:
+#      - GF_AUTH_ANONYMOUS_ENABLED=true
+#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+#      - GF_AUTH_DISABLE_LOGIN_FORM=true
+#      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
+#    ports:
+#      - "3000:3000"

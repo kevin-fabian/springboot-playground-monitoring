@@ -1,0 +1,41 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+
+exporters:
+  otlp:
+    endpoint: "tempo:4327"
+    tls:
+      insecure: true
+  logging:
+    loglevel: debug
+
+service:
+  extensions: [ health_check, pprof, zpages ]
+  pipelines:
+    traces:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ otlp ]
+
+#service:
+#  pipelines:
+#    traces:
+#      receivers: [otlp]
+#      exporters: [logging]
+#    metrics:
+#      receivers: [otlp]
+#      exporters: [logging]

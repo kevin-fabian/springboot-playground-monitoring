@@ -1,0 +1,26 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: springboot-observation-tempo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  otlp:
+    tracing:
+#      compression: gzip
+#      endpoint: http://0.0.0.0:4318/v1/traces
+      endpoint: http://0.0.0.0:4317
+
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1
+
+logging:
+  level:
+    io.micrometer.tracing: DEBUG
+    io.opentelemetry: DEBUG

@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  init:
+    image: &tempoImage grafana/tempo:latest
+    user: root
+    entrypoint:
+      - "chown"
+      - "10001:10001"
+      - "/var/tempo"
+    volumes:
+      - ./tempo-data:/var/tempo
+
+  tempo:
+    image: *tempoImage
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./dc/tempo-config.yaml:/etc/tempo.yaml
+      - ./tempo-data:/var/tempo
+    depends_on:
+      - init
+    ports:
+      - "3200:3200"
+      - "3100:3100"
+      - "4327:4327"   # OTLP gRPC receiver
+      - "4328:4328"   # OTLP HTTP receiver
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./dc/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the Collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "55679:55679" # zpages extension
+    command:
+      - --config=/etc/otelcol-contrib/config.yaml

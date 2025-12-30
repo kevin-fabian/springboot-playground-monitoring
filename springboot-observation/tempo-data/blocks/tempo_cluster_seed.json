@@ -1,0 +1,12 @@
+{
+  "UID": "9969105e-991f-45d7-8ca2-0300822dc722",
+  "created_at": "2024-02-11T07:32:11.9832455Z",
+  "version": {
+    "version": "main-9d82759",
+    "revision": "9d82759dd",
+    "branch": "main",
+    "buildUser": "",
+    "buildDate": "",
+    "goVersion": "go1.21.3"
+  }
+}
